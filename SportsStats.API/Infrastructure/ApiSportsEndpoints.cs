@@ -5,6 +5,7 @@ public static class ApiSportsEndpoints
     public const string PlayersSearchPath = "/players";
     public const string StatisticsPath = "/players/statistics";
     public const string GamesPath = "/games";
+    public const string GamePlayerStatsPath = "/games/statistics/players";
 
     // NFL uses /players?search=name&season=year
     // NBA uses /players?search=name&season=year

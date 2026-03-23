@@ -8,6 +8,8 @@ public class Sport
     public string? IconUrl { get; set; }
     public string ApiSportsLeagueId { get; set; } = string.Empty;
     public string ApiSportsBaseUrl { get; set; } = string.Empty;
+    public string? EspnSport { get; set; }
+    public string? EspnLeague { get; set; }
 
     public ICollection<CachedPlayer> CachedPlayers { get; set; } = new List<CachedPlayer>();
     public SeasonStatus? SeasonStatus { get; set; }

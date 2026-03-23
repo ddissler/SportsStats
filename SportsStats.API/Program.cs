@@ -17,8 +17,15 @@ builder.Services.AddHttpClient("ApiSports", client =>
     client.Timeout = TimeSpan.FromSeconds(15);
 });
 
+// Named HTTP client for ESPN (no auth, 10s timeout)
+builder.Services.AddHttpClient("Espn", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
+
 // Services
 builder.Services.AddScoped<IApiSportsService, ApiSportsService>();
+builder.Services.AddScoped<IEspnService, EspnService>();
 builder.Services.AddScoped<ISeasonStatusService, SeasonStatusService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IStatsService, StatsService>();

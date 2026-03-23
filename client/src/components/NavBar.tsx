@@ -12,10 +12,10 @@ export default function NavBar() {
         </Link>
         <div className="flex items-center gap-6 text-sm text-gray-400">
           <Link
-            to="/"
-            className={`hover:text-white transition-colors ${location.pathname === '/' ? 'text-white font-medium' : ''}`}
+            to="/admin"
+            className={`hover:text-white transition-colors ${location.pathname === '/admin' ? 'text-white font-medium' : ''}`}
           >
-            Sports
+            Admin
           </Link>
         </div>
       </div>

@@ -27,24 +27,25 @@ public class StatsController : ControllerBase
         return Ok(result);
     }
 
-    // GET api/stats/career?sportId=1&playerId=abc
-    [HttpGet("career")]
-    public async Task<ActionResult<List<StatsResponseDto>>> GetCareer(
-        [FromQuery] int sportId,
-        [FromQuery] string playerId)
-    {
-        var results = await _statsService.GetCareerStatsAsync(sportId, playerId);
-        return Ok(results);
-    }
-
-    // GET api/stats/gamelogs?sportId=1&playerId=abc&season=2024
-    [HttpGet("gamelogs")]
-    public async Task<ActionResult<StatsResponseDto>> GetGameLogs(
+    // GET api/stats/games?sportId=1&playerId=abc&season=2024
+    [HttpGet("games")]
+    public async Task<ActionResult<List<GameDto>>> GetGames(
         [FromQuery] int sportId,
         [FromQuery] string playerId,
         [FromQuery] int season)
     {
-        var result = await _statsService.GetGameLogsAsync(sportId, playerId, season);
+        var results = await _statsService.GetGamesAsync(sportId, playerId, season);
+        return Ok(results);
+    }
+
+    // GET api/stats/game?sportId=1&playerId=abc&gameId=12345
+    [HttpGet("game")]
+    public async Task<ActionResult<StatsResponseDto>> GetGameStats(
+        [FromQuery] int sportId,
+        [FromQuery] string playerId,
+        [FromQuery] int gameId)
+    {
+        var result = await _statsService.GetGameStatsAsync(sportId, playerId, gameId);
         if (result is null) return NotFound();
         return Ok(result);
     }

@@ -33,8 +33,32 @@ public class ApiSportsPlayer
     [JsonPropertyName("photo")]
     public string? Photo { get; set; }
 
+    [JsonPropertyName("image")]
+    public string? Image { get; set; }
+
+    [JsonPropertyName("age")]
+    public int? Age { get; set; }
+
+    [JsonPropertyName("height")]
+    public string? Height { get; set; }
+
+    [JsonPropertyName("weight")]
+    public string? Weight { get; set; }
+
+    [JsonPropertyName("college")]
+    public string? College { get; set; }
+
     [JsonPropertyName("position")]
     public string? Position { get; set; }
+
+    [JsonPropertyName("group")]
+    public string? Group { get; set; }
+
+    [JsonPropertyName("number")]
+    public int? Number { get; set; }
+
+    [JsonPropertyName("experience")]
+    public int? Experience { get; set; }
 
     // Used by NBA
     [JsonPropertyName("leagues")]

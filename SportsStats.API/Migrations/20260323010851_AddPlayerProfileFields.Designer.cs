@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportsStats.API.Data;
 
@@ -11,9 +12,11 @@ using SportsStats.API.Data;
 namespace SportsStats.API.Migrations
 {
     [DbContext(typeof(SportsStatsDbContext))]
-    partial class SportsStatsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260323010851_AddPlayerProfileFields")]
+    partial class AddPlayerProfileFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,14 +41,6 @@ namespace SportsStats.API.Migrations
 
                     b.Property<int?>("Experience")
                         .HasColumnType("int");
-
-                    b.Property<string>("EspnPlayerId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ApiSportsPlayerId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ExternalPlayerId")
                         .IsRequired()
@@ -86,8 +81,6 @@ namespace SportsStats.API.Migrations
 
                     b.HasIndex("SportId", "ExternalPlayerId")
                         .IsUnique();
-
-                    b.HasIndex("SportId", "EspnPlayerId");
 
                     b.ToTable("CachedPlayers");
                 });
@@ -171,14 +164,6 @@ namespace SportsStats.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EspnSport")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("EspnLeague")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("IconUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -205,8 +190,6 @@ namespace SportsStats.API.Migrations
                             Id = 1,
                             ApiSportsBaseUrl = "https://v1.american-football.api-sports.io",
                             ApiSportsLeagueId = "1",
-                            EspnSport = "football",
-                            EspnLeague = "nfl",
                             Name = "NFL",
                             Slug = "nfl"
                         },
@@ -215,8 +198,6 @@ namespace SportsStats.API.Migrations
                             Id = 2,
                             ApiSportsBaseUrl = "https://v1.basketball.api-sports.io",
                             ApiSportsLeagueId = "12",
-                            EspnSport = "basketball",
-                            EspnLeague = "nba",
                             Name = "NBA",
                             Slug = "nba"
                         },
@@ -225,8 +206,6 @@ namespace SportsStats.API.Migrations
                             Id = 3,
                             ApiSportsBaseUrl = "https://v1.baseball.api-sports.io",
                             ApiSportsLeagueId = "1",
-                            EspnSport = "baseball",
-                            EspnLeague = "mlb",
                             Name = "MLB",
                             Slug = "mlb"
                         },
@@ -235,8 +214,6 @@ namespace SportsStats.API.Migrations
                             Id = 4,
                             ApiSportsBaseUrl = "https://v1.hockey.api-sports.io",
                             ApiSportsLeagueId = "57",
-                            EspnSport = "hockey",
-                            EspnLeague = "nhl",
                             Name = "NHL",
                             Slug = "nhl"
                         },
@@ -245,8 +222,6 @@ namespace SportsStats.API.Migrations
                             Id = 5,
                             ApiSportsBaseUrl = "https://v3.football.api-sports.io",
                             ApiSportsLeagueId = "253",
-                            EspnSport = "soccer",
-                            EspnLeague = "usa.1",
                             Name = "MLS",
                             Slug = "mls"
                         });

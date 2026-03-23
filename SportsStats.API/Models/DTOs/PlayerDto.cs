@@ -7,5 +7,11 @@ public class PlayerDto
     public string? PhotoUrl { get; set; }
     public bool IsActive { get; set; }
     public string? Position { get; set; }
+    public int? Age { get; set; }
+    public string? Height { get; set; }
+    public string? Weight { get; set; }
+    public string? College { get; set; }
+    public int? Number { get; set; }
+    public int? Experience { get; set; }
     public string? Team { get; set; }
 }

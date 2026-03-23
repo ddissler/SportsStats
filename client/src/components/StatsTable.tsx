@@ -1,5 +1,10 @@
+import type { Player } from '../types/player'
+
 interface Props {
   data: unknown
+  player?: Player | null
+  source?: string
+  message?: string
 }
 
 interface StatEntry {
@@ -39,7 +44,7 @@ function checkForApiError(data: unknown): string | null {
   }
 
   if (Array.isArray(envelope.response) && envelope.response.length === 0) {
-    return 'No stats found for this player and season.'
+    return 'NO_GAME_STATS'
   }
 
   return null
@@ -119,12 +124,74 @@ function parseResponseItem(item: unknown): StatGroup[] {
   return parseFlatStyle(obj)
 }
 
-export default function StatsTable({ data }: Props) {
+/** Build a profile stat table from the player's known info */
+function buildProfileStats(player: Player): StatGroup[] {
+  const stats: StatEntry[] = []
+  if (player.position) stats.push({ name: 'Position', value: player.position })
+  if (player.number != null) stats.push({ name: 'Number', value: `#${player.number}` })
+  if (player.age) stats.push({ name: 'Age', value: String(player.age) })
+  if (player.height) stats.push({ name: 'Height', value: player.height })
+  if (player.weight) stats.push({ name: 'Weight', value: player.weight })
+  if (player.college) stats.push({ name: 'College', value: player.college })
+  if (player.experience != null) stats.push({ name: 'Experience', value: `${player.experience} yr${player.experience !== 1 ? 's' : ''}` })
+  return stats.length > 0 ? [{ groupName: 'Player Profile', stats }] : []
+}
+
+export default function StatsTable({ data, player, source, message }: Props) {
+  // Show contextual message (e.g. "No NFL stats available for the 2026 season")
+  if (message) {
+    return (
+      <div className="space-y-2">
+        <div className="bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-xl px-5 py-4 text-center">
+          <p className="font-medium">{message}</p>
+        </div>
+        {source && (
+          <div className="text-right text-xs text-gray-500">Source: {source}</div>
+        )}
+      </div>
+    )
+  }
+
   if (!data) {
     return <div className="text-center text-gray-500 py-12">No stats available.</div>
   }
 
   const apiError = checkForApiError(data)
+  if (apiError === 'NO_GAME_STATS') {
+    const profileGroups = player ? buildProfileStats(player) : []
+    return (
+      <div className="space-y-4">
+        <div className="bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-xl px-5 py-4 text-center">
+          <p className="font-medium">No game statistics recorded</p>
+          <p className="text-yellow-400/70 text-sm mt-1">
+            This player is in the league roster database but has no recorded game stats for this season.
+            They may be on a practice squad, injured reserve, or did not see game action.
+          </p>
+        </div>
+        {profileGroups.length > 0 && (
+          <>
+            {profileGroups.map((group, gi) => (
+              <div key={gi} className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
+                <div className="px-4 py-2.5 bg-gray-700/60 border-b border-gray-700">
+                  <span className="text-white font-semibold text-sm">{group.groupName}</span>
+                </div>
+                <table className="w-full text-sm">
+                  <tbody className="divide-y divide-gray-700/40">
+                    {group.stats.map((stat, si) => (
+                      <tr key={si} className="hover:bg-gray-700/30 transition-colors">
+                        <td className="px-4 py-2.5 text-gray-400 w-1/2">{stat.name}</td>
+                        <td className="px-4 py-2.5 text-white font-medium">{stat.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    )
+  }
   if (apiError) {
     return (
       <div className="bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-xl px-5 py-4 text-center">
@@ -164,6 +231,9 @@ export default function StatsTable({ data }: Props) {
           </table>
         </div>
       ))}
+      {source && (
+        <div className="text-right text-xs text-gray-500">Source: {source}</div>
+      )}
     </div>
   )
 }
