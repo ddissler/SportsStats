@@ -3,12 +3,15 @@ import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { getPlayer } from '../api/playersApi'
 import { getSeasonalStats, getGames, getGameStats } from '../api/statsApi'
 import StatsTable from '../components/StatsTable'
+import NflFantasyScoreCard from '../components/NflFantasyScoreCard'
 import type { Player } from '../types/player'
 import type { StatsResponse } from '../types/stats'
 import type { Game } from '../types/game'
 
 const currentYear = new Date().getFullYear()
 const SEASONS = Array.from({ length: currentYear - 2021 }, (_, i) => currentYear - i)
+
+const NFL_FANTASY_POSITIONS = new Set(['QB', 'RB', 'WR', 'TE'])
 
 export default function PlayerStatsPage() {
   const { sportSlug, playerId } = useParams<{ sportSlug: string; playerId: string }>()
@@ -30,6 +33,9 @@ export default function PlayerStatsPage() {
   const [gameStats, setGameStats] = useState<Record<number, StatsResponse>>({})
   const [gameStatsLoading, setGameStatsLoading] = useState<number | null>(null)
 
+  const isNflFantasyPos = sportSlug === 'nfl' &&
+    NFL_FANTASY_POSITIONS.has(player?.position?.toUpperCase() ?? '')
+
   useEffect(() => {
     if (!sportId || !playerId) return
     getPlayer(sportId, playerId).then(setPlayer).catch(() => {})
@@ -49,11 +55,9 @@ export default function PlayerStatsPage() {
     getSeasonalStats(sportId, playerId, season)
       .then((r) => {
         setSeasonal(r)
-        // If the response has a message (e.g. season not started), show it instead of generic error
         if (r.message) {
           setSeasonalError(null)
         }
-        // Fetch games after seasonal stats load (needs team ID)
         setGamesLoading(true)
         return getGames(sportId, playerId, season)
       })
@@ -170,9 +174,18 @@ export default function PlayerStatsPage() {
         {seasonalLoading ? <Spinner /> :
          seasonalError ? (
            <div className="bg-red-900/40 border border-red-700 text-red-300 rounded-xl px-4 py-3">{seasonalError}</div>
-         ) :
-         seasonal ? <StatsTable data={seasonal.data} player={player} source={seasonal.source} message={seasonal.message} /> :
-         null}
+         ) : seasonal ? (
+           <div className="space-y-4">
+             {isNflFantasyPos && player && (
+               <NflFantasyScoreCard
+                 data={seasonal.data}
+                 position={player.position!}
+                 statType="seasonal"
+               />
+             )}
+             <StatsTable data={seasonal.data} player={player} source={seasonal.source} message={seasonal.message} />
+           </div>
+         ) : null}
       </div>
 
       {/* Games list */}

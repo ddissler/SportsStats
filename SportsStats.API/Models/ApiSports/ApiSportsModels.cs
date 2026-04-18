@@ -153,3 +153,134 @@ public class ApiSportsGame
     [JsonPropertyName("date")]
     public string? Date { get; set; }
 }
+
+// ---------- NFL Teams ----------
+
+public class NflTeamDetail
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("logo")]
+    public string? Logo { get; set; }
+
+    [JsonPropertyName("abbreviation")]
+    public string? Abbreviation { get; set; }
+
+    // Some response shapes nest team under a "team" key
+    [JsonPropertyName("team")]
+    public NflTeamDetail? Team { get; set; }
+}
+
+// ---------- NFL Games ----------
+
+public class NflGame
+{
+    [JsonPropertyName("game")]
+    public NflGameInfo? Game { get; set; }
+
+    [JsonPropertyName("teams")]
+    public NflGameTeams? Teams { get; set; }
+
+    [JsonPropertyName("scores")]
+    public NflGameScores? Scores { get; set; }
+
+    [JsonPropertyName("status")]
+    public NflGameStatus? Status { get; set; }
+}
+
+public class NflGameInfo
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("week")]
+    public string? Week { get; set; }
+
+    [JsonPropertyName("stage")]
+    public string? Stage { get; set; }
+}
+
+public class NflGameTeams
+{
+    [JsonPropertyName("home")]
+    public NflTeamRef? Home { get; set; }
+
+    [JsonPropertyName("away")]
+    public NflTeamRef? Away { get; set; }
+}
+
+public class NflTeamRef
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("logo")]
+    public string? Logo { get; set; }
+}
+
+public class NflGameScores
+{
+    [JsonPropertyName("home")]
+    public NflGameScore? Home { get; set; }
+
+    [JsonPropertyName("away")]
+    public NflGameScore? Away { get; set; }
+}
+
+public class NflGameScore
+{
+    [JsonPropertyName("total")]
+    public int? Total { get; set; }
+}
+
+public class NflGameStatus
+{
+    // "FT" = Final, "AOT" = Final (OT), "NS" = Not Started, etc.
+    [JsonPropertyName("short")]
+    public string? Short { get; set; }
+}
+
+// ---------- NFL Team Statistics ----------
+
+public class NflTeamStatsEntry
+{
+    [JsonPropertyName("team")]
+    public NflTeamRef? Team { get; set; }
+
+    [JsonPropertyName("statistics")]
+    public List<NflStatCategory>? Statistics { get; set; }
+}
+
+public class NflStatCategory
+{
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("groups")]
+    public List<NflStatGroup>? Groups { get; set; }
+}
+
+public class NflStatGroup
+{
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("statistics")]
+    public List<NflStatItem>? Statistics { get; set; }
+}
+
+public class NflStatItem
+{
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+
+    [JsonPropertyName("value")]
+    public string? Value { get; set; }
+}

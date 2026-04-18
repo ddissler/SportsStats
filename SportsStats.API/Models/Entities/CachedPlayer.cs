@@ -17,6 +17,7 @@ public class CachedPlayer
     public int? Number { get; set; }
     public int? Experience { get; set; }
     public bool IsActive { get; set; }
+    public string? Team { get; set; }
     public DateTime LastUpdated { get; set; }
 
     public Sport Sport { get; set; } = null!;

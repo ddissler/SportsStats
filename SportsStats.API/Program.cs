@@ -29,6 +29,7 @@ builder.Services.AddScoped<IEspnService, EspnService>();
 builder.Services.AddScoped<ISeasonStatusService, SeasonStatusService>();
 builder.Services.AddScoped<IPlayerService, PlayerService>();
 builder.Services.AddScoped<IStatsService, StatsService>();
+builder.Services.AddScoped<ITeamDefenseService, TeamDefenseService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

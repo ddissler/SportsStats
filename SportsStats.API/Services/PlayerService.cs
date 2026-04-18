@@ -229,6 +229,58 @@ public class PlayerService : IPlayerService
         await _db.SaveChangesAsync();
     }
 
+    public async Task<List<PlayerWithStatsDto>> ListPlayersWithStatsAsync(int sportId, int season, string? position)
+    {
+        var seasonStr = season.ToString();
+
+        var query = _db.CachedPlayers
+            .Where(p => p.SportId == sportId && p.Position != null);
+
+        // Filter to skill positions only (for NFL DFS)
+        var skillPositions = new[] { "QB", "RB", "WR", "TE", "K" };
+        query = query.Where(p => skillPositions.Contains(p.Position!.ToUpper()));
+
+        if (!string.IsNullOrWhiteSpace(position))
+            query = query.Where(p => p.Position!.ToUpper() == position.ToUpper());
+
+        var players = await query.OrderBy(p => p.Name).ToListAsync();
+        if (players.Count == 0) return [];
+
+        // Bulk-load seasonal stats for all matching players
+        var playerIds = players.Select(p => p.Id).ToList();
+        var statsLookup = await _db.CachedStats
+            .Where(s => playerIds.Contains(s.CachedPlayerId) &&
+                        s.StatType == "seasonal" &&
+                        s.Season == seasonStr)
+            .ToDictionaryAsync(s => s.CachedPlayerId, s => s);
+
+        var result = new List<PlayerWithStatsDto>(players.Count);
+        foreach (var p in players)
+        {
+            statsLookup.TryGetValue(p.Id, out var statRecord);
+            object? statsData = null;
+            if (statRecord is not null)
+            {
+                try { statsData = JsonSerializer.Deserialize<object>(statRecord.DataJson); }
+                catch { /* leave null */ }
+            }
+
+            result.Add(new PlayerWithStatsDto
+            {
+                Id = p.ExternalPlayerId,
+                Name = p.Name,
+                PhotoUrl = p.PhotoUrl,
+                IsActive = p.IsActive,
+                Position = p.Position,
+                Team = p.Team,
+                SeasonalStats = statsData,
+                StatsSeason = statRecord is not null ? season : null,
+            });
+        }
+
+        return result;
+    }
+
     private static PlayerDto MapToDto(CachedPlayer p) => new()
     {
         Id = p.ExternalPlayerId,
@@ -241,6 +293,7 @@ public class PlayerService : IPlayerService
         College = p.College,
         Number = p.Number,
         Experience = p.Experience,
-        IsActive = p.IsActive
+        IsActive = p.IsActive,
+        Team = p.Team
     };
 }

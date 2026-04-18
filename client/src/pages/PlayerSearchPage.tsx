@@ -4,10 +4,12 @@ import { getSportBySlug } from '../api/sportsApi'
 import { usePlayers } from '../hooks/usePlayers'
 import PlayerSearch from '../components/PlayerSearch'
 import PlayerCard from '../components/PlayerCard'
+import NflRosterTable from '../components/NflRosterTable'
 import Pagination from '../components/Pagination'
 import type { Sport } from '../types/sport'
 
 const PAGE_SIZE = 10
+const NFL_PAGE_SIZE = 50
 
 export default function PlayerSearchPage() {
   const { sportSlug } = useParams<{ sportSlug: string }>()
@@ -28,16 +30,18 @@ export default function PlayerSearchPage() {
       .catch(() => setSportError(true))
   }, [sportSlug])
 
+  const isNfl = sportSlug === 'nfl'
+
   const handleSearch = (name: string, isActive?: boolean) => {
     lastSearch.current = { name, isActive }
     setPage(1)
-    search(sport!.id, name, isActive, 1, PAGE_SIZE)
+    search(sport!.id, name, isActive, 1, isNfl ? NFL_PAGE_SIZE : PAGE_SIZE)
   }
 
   const handlePageChange = (newPage: number) => {
     if (!lastSearch.current || !sport) return
     setPage(newPage)
-    search(sport.id, lastSearch.current.name, lastSearch.current.isActive, newPage, PAGE_SIZE)
+    search(sport.id, lastSearch.current.name, lastSearch.current.isActive, newPage, isNfl ? NFL_PAGE_SIZE : PAGE_SIZE)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -53,7 +57,7 @@ export default function PlayerSearchPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className={isNfl ? 'max-w-4xl mx-auto' : 'max-w-2xl mx-auto'}>
       <button
         onClick={() => navigate('/')}
         className="text-gray-400 hover:text-white transition-colors mb-6 flex items-center gap-1 text-sm"
@@ -78,28 +82,38 @@ export default function PlayerSearchPage() {
         </div>
       )}
 
-      {result && result.items.length > 0 && (
+      {result && result.items.length > 0 && sport && (
         <div>
-          <p className="text-gray-400 text-sm mb-3">
-            {result.totalCount} player{result.totalCount !== 1 ? 's' : ''} found
-          </p>
-          <div className="space-y-2">
-            {sport && result.items.map((player) => (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                sportSlug={sport.slug}
-                sportId={sport.id}
+          {isNfl ? (
+            <NflRosterTable
+              players={result.items}
+              sportSlug={sport.slug}
+              sportId={sport.id}
+            />
+          ) : (
+            <>
+              <p className="text-gray-400 text-sm mb-3">
+                {result.totalCount} player{result.totalCount !== 1 ? 's' : ''} found
+              </p>
+              <div className="space-y-2">
+                {result.items.map((player) => (
+                  <PlayerCard
+                    key={player.id}
+                    player={player}
+                    sportSlug={sport.slug}
+                    sportId={sport.id}
+                  />
+                ))}
+              </div>
+              <Pagination
+                page={page}
+                totalPages={result.totalPages}
+                totalCount={result.totalCount}
+                pageSize={PAGE_SIZE}
+                onPageChange={handlePageChange}
               />
-            ))}
-          </div>
-          <Pagination
-            page={page}
-            totalPages={result.totalPages}
-            totalCount={result.totalCount}
-            pageSize={PAGE_SIZE}
-            onPageChange={handlePageChange}
-          />
+            </>
+          )}
         </div>
       )}
 

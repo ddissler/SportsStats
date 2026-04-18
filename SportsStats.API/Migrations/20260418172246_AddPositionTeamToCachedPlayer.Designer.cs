@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SportsStats.API.Data;
 
@@ -11,9 +12,11 @@ using SportsStats.API.Data;
 namespace SportsStats.API.Migrations
 {
     [DbContext(typeof(SportsStatsDbContext))]
-    partial class SportsStatsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260418172246_AddPositionTeamToCachedPlayer")]
+    partial class AddPositionTeamToCachedPlayer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,83 +104,6 @@ namespace SportsStats.API.Migrations
                     b.HasIndex("CachedPlayerId");
 
                     b.ToTable("CachedStats");
-                });
-
-            modelBuilder.Entity("SportsStats.API.Models.Entities.CachedTeamDefense", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("BlockedKicks")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DefensiveTDs")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ExternalTeamId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("ForcedFumbles")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FumblesRecovered")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GamesPlayed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Interceptions")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LogoUrl")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("PerGamePointsAllowedJson")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Sacks")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Safeties")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Season")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpecialTeamsTDs")
-                        .HasColumnType("int");
-
-                    b.Property<string>("TeamAbbr")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("TeamName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("TotalPointsAllowed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("YardsAllowed")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExternalTeamId", "Season")
-                        .IsUnique();
-
-                    b.ToTable("CachedTeamDefenses");
                 });
 
             modelBuilder.Entity("SportsStats.API.Models.Entities.SeasonStatus", b =>

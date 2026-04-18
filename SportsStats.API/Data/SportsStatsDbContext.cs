@@ -12,6 +12,7 @@ public class SportsStatsDbContext : DbContext
     public DbSet<CachedPlayer> CachedPlayers => Set<CachedPlayer>();
     public DbSet<CachedStat> CachedStats => Set<CachedStat>();
     public DbSet<SeasonStatus> SeasonStatuses => Set<SeasonStatus>();
+    public DbSet<CachedTeamDefense> CachedTeamDefenses => Set<CachedTeamDefense>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +37,8 @@ public class SportsStatsDbContext : DbContext
             e.Property(p => p.ApiSportsPlayerId).HasMaxLength(50);
             e.Property(p => p.Name).HasMaxLength(200).IsRequired();
             e.Property(p => p.PhotoUrl).HasMaxLength(500);
+            e.Property(p => p.Position).HasMaxLength(20);
+            e.Property(p => p.Team).HasMaxLength(100);
             e.HasOne(p => p.Sport)
              .WithMany(s => s.CachedPlayers)
              .HasForeignKey(p => p.SportId)
@@ -62,6 +65,17 @@ public class SportsStatsDbContext : DbContext
              .WithOne(sp => sp.SeasonStatus)
              .HasForeignKey<SeasonStatus>(s => s.SportId)
              .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<CachedTeamDefense>(e =>
+        {
+            e.HasKey(t => t.Id);
+            e.HasIndex(t => new { t.ExternalTeamId, t.Season }).IsUnique();
+            e.Property(t => t.ExternalTeamId).HasMaxLength(50).IsRequired();
+            e.Property(t => t.TeamName).HasMaxLength(200).IsRequired();
+            e.Property(t => t.TeamAbbr).HasMaxLength(10);
+            e.Property(t => t.LogoUrl).HasMaxLength(500);
+            e.Property(t => t.PerGamePointsAllowedJson).HasColumnType("nvarchar(max)");
         });
 
         // Seed supported sports

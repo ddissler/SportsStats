@@ -49,4 +49,16 @@ public class PlayersController : ControllerBase
         if (player is null) return NotFound();
         return Ok(player);
     }
+
+    // GET api/players/list?sportId=1&season=2024&position=QB
+    [HttpGet("list")]
+    public async Task<ActionResult<List<PlayerWithStatsDto>>> ListPlayers(
+        [FromQuery] int sportId,
+        [FromQuery] int season = 2024,
+        [FromQuery] string? position = null)
+    {
+        if (sportId <= 0) return BadRequest("sportId is required.");
+        var results = await _playerService.ListPlayersWithStatsAsync(sportId, season, position);
+        return Ok(results);
+    }
 }
