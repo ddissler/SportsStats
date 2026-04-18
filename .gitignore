@@ -1,23 +1,34 @@
-# .NET
-bin/
-obj/
+# .NET build output
+**/bin/
+**/obj/
+
+# User-specific Visual Studio files
 *.user
 *.suo
-*.cache
-*.vs/
+.vs/
+
+# NuGet packages
+**/packages/
+*.nupkg
+
+# dotnet publish
+**/publish/
+
+# Environment / secrets
+*.env
+*.local
+appsettings.Local.json
+appsettings.Development.json
 
 # Node
 node_modules/
 dist/
+.cache/
 
 # IDE
 .idea/
 .vscode/
 
 # OS
-Thumbs.db
 .DS_Store
-
-# Environment
-.env
-*.local
+Thumbs.db
