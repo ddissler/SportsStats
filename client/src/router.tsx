@@ -12,9 +12,8 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       { index: true, element: <HomePage /> },
-      // NFL: DFS home page at /sport/nfl, player search at /sport/nfl/search
+      // NFL: DFS home page
       { path: 'sport/nfl', element: <NflDfsPage /> },
-      { path: 'sport/nfl/search', element: <PlayerSearchPage /> },
       // All other sports
       { path: 'sport/:sportSlug', element: <PlayerSearchPage /> },
       { path: 'sport/:sportSlug/player/:playerId', element: <PlayerStatsPage /> },
