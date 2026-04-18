@@ -124,9 +124,33 @@ public class PlayerService : IPlayerService
             }
             if (string.IsNullOrEmpty(espnId)) continue;
 
-            var position = item.TryGetProperty("position", out var pos) ? pos.GetString() : null;
-            var headshot = item.TryGetProperty("headshot", out var hs) ? hs.GetString() : null;
-            var team = item.TryGetProperty("team", out var tm) ? tm.GetString() : null;
+            // "position" can be a string or an object with a "name" field
+            string? position = null;
+            if (item.TryGetProperty("position", out var pos))
+            {
+                position = pos.ValueKind == System.Text.Json.JsonValueKind.String
+                    ? pos.GetString()
+                    : pos.TryGetProperty("name", out var pn) ? pn.GetString() : null;
+            }
+
+            // "headshot" is usually an object { "href": "..." }, sometimes a plain string
+            string? headshot = null;
+            if (item.TryGetProperty("headshot", out var hs))
+            {
+                headshot = hs.ValueKind == System.Text.Json.JsonValueKind.String
+                    ? hs.GetString()
+                    : hs.TryGetProperty("href", out var href) ? href.GetString() : null;
+            }
+
+            // "team" can also be an object
+            string? team = null;
+            if (item.TryGetProperty("team", out var tm))
+            {
+                team = tm.ValueKind == System.Text.Json.JsonValueKind.String
+                    ? tm.GetString()
+                    : tm.TryGetProperty("displayName", out var tdn) ? tdn.GetString()
+                    : tm.TryGetProperty("name", out var tn) ? tn.GetString() : null;
+            }
 
             // Check for existing player with same name+sport (dedup)
             var existing = await _db.CachedPlayers
